@@ -1,45 +1,63 @@
 import { useState } from "react";
-import logo from "./logo.svg";
-import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0);
+import { Status, Wrapper } from "@googlemaps/react-wrapper";
+import Marker from "./Marker";
+import Map from "./Map";
+import Form from "./Form";
+import LatLngLiteral = google.maps.LatLngLiteral;
+
+const render = (status: Status) => {
+  return <h1>{status}</h1>;
+};
+
+const App = () => {
+  const [clicks, setClicks] = useState<google.maps.LatLng[]>([]);
+  const [zoom, setZoom] = useState(3); // initial zoom
+  const [center, setCenter] = useState<LatLngLiteral>({
+    lat: 0,
+    lng: 0,
+  });
+
+  const onClick = (e: google.maps.MapMouseEvent) => {
+    // avoid directly mutating state
+    setClicks([...clicks, e.latLng!]);
+  };
+
+  const onIdle = (m: google.maps.Map) => {
+    console.log("onIdle");
+    setZoom(m.getZoom()!);
+    setCenter(m.getCenter()!.toJSON());
+  };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {" | "}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
+    <div style={{ display: "flex", height: "100%" }}>
+      <Wrapper
+        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY!}
+        render={render}
+      >
+        <Map
+          center={center}
+          onClick={onClick}
+          onIdle={onIdle}
+          zoom={zoom}
+          style={{ flexGrow: "1", height: "100%" }}
+        >
+          {clicks.map((latLng, i) => (
+            <Marker key={i} position={latLng} />
+          ))}
+        </Map>
+      </Wrapper>
+      {/* Basic form for controlling center and zoom of map. */}
+      <Form
+        center={center}
+        setCenter={setCenter}
+        zoom={zoom}
+        setZoom={setZoom}
+        clicks={clicks}
+        setClicks={setClicks}
+      />
     </div>
   );
-}
+};
 
 export default App;

@@ -5,13 +5,18 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky install"
   },
   "dependencies": {
+    "@googlemaps/react-wrapper": "^1.1.34",
+    "@googlemaps/typescript-guards": "^1.0.16",
+    "fast-equals": "^3.0.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0"
   },
   "devDependencies": {
+    "@types/google.maps": "^3.49.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
@@ -19,9 +24,17 @@
     "@vitejs/plugin-react": "^1.3.0",
     "eslint": "^8.16.0",
     "eslint-plugin-react": "^7.30.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
     "sass": "^1.52.1",
     "typescript": "^4.6.3",
     "vite": "^2.9.9"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }
