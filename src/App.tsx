@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Status, Wrapper } from "@googlemaps/react-wrapper";
 import Marker from "./components/Marker";
 import Map from "./components/Map";
+import Line from "./components/Line";
 import LatLngLiteral = google.maps.LatLngLiteral;
 import MapMouseEvent = google.maps.MapMouseEvent;
 
@@ -12,7 +13,7 @@ const render = (status: Status) => {
 
 const App = () => {
   const [clicks, setClicks] = useState<google.maps.LatLng[]>([]);
-  const [zoom, setZoom] = useState(6); // initial zoom
+  const [zoom, setZoom] = useState(6);
   const [center, setCenter] = useState<LatLngLiteral>({
     lat: 55,
     lng: -4,
@@ -50,9 +51,16 @@ const App = () => {
           zoom={zoom}
           style={{ flexGrow: "1", height: "100%" }}
         >
-          {clicks.map((latLng, i) => (
-            <Marker key={i} position={latLng} />
-          ))}
+          {clicks.map((latLng, i) => [
+            <Marker key={`marker${i}`} position={latLng} />,
+            <Line
+              key={`line${i}`}
+              path={[
+                { lat: latLng.lat(), lng: latLng.lng() },
+                { lat: 51.5, lng: 0 },
+              ]}
+            />,
+          ])}
         </Map>
       </Wrapper>
       {/* Basic form for controlling center and zoom of map. */}
