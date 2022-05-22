@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 import { Status, Wrapper } from "@googlemaps/react-wrapper";
-import Marker from "./Marker";
-import Map from "./Map";
-import Form from "./Form";
+import Marker from "./components/Marker";
+import Map from "./components/Map";
 import LatLngLiteral = google.maps.LatLngLiteral;
+import MapMouseEvent = google.maps.MapMouseEvent;
 
 const render = (status: Status) => {
   return <h1>{status}</h1>;
@@ -12,27 +12,35 @@ const render = (status: Status) => {
 
 const App = () => {
   const [clicks, setClicks] = useState<google.maps.LatLng[]>([]);
-  const [zoom, setZoom] = useState(3); // initial zoom
+  const [zoom, setZoom] = useState(6); // initial zoom
   const [center, setCenter] = useState<LatLngLiteral>({
-    lat: 0,
-    lng: 0,
+    lat: 55,
+    lng: -4,
   });
 
-  const onClick = (e: google.maps.MapMouseEvent) => {
-    // avoid directly mutating state
-    setClicks([...clicks, e.latLng!]);
+  const onClick = (e: MapMouseEvent) => {
+    const newLatLang = e.latLng;
+
+    if (newLatLang) setClicks((prev) => [...prev, newLatLang]);
   };
 
   const onIdle = (m: google.maps.Map) => {
-    console.log("onIdle");
-    setZoom(m.getZoom()!);
-    setCenter(m.getCenter()!.toJSON());
+    const newZoom = m?.getZoom();
+    const newCenter = m?.getCenter()?.toJSON();
+
+    if (newZoom !== undefined) {
+      setZoom(newZoom);
+    }
+
+    if (newCenter) {
+      setCenter(newCenter);
+    }
   };
 
   return (
     <div style={{ display: "flex", height: "100%" }}>
       <Wrapper
-        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY!}
+        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
         render={render}
       >
         <Map
@@ -48,14 +56,14 @@ const App = () => {
         </Map>
       </Wrapper>
       {/* Basic form for controlling center and zoom of map. */}
-      <Form
-        center={center}
-        setCenter={setCenter}
-        zoom={zoom}
-        setZoom={setZoom}
-        clicks={clicks}
-        setClicks={setClicks}
-      />
+      {/*<Form*/}
+      {/*  center={center}*/}
+      {/*  setCenter={setCenter}*/}
+      {/*  zoom={zoom}*/}
+      {/*  setZoom={setZoom}*/}
+      {/*  clicks={clicks}*/}
+      {/*  setClicks={setClicks}*/}
+      {/*/>*/}
     </div>
   );
 };
