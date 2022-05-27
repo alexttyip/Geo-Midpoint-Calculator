@@ -13,11 +13,10 @@ import MapOptions = google.maps.MapOptions;
 interface MapProps extends MapOptions {
   style: { [key: string]: string };
   onClick?: (e: google.maps.MapMouseEvent) => void;
-  onIdle?: (map: google.maps.Map) => void;
   children?: ReactNode;
 }
 
-const Map = ({ onClick, onIdle, children, style, ...options }: MapProps) => {
+const Map = ({ onClick, children, style, ...options }: MapProps) => {
   const ref = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map>();
 
@@ -44,12 +43,8 @@ const Map = ({ onClick, onIdle, children, style, ...options }: MapProps) => {
       if (onClick) {
         map.addListener("click", onClick);
       }
-
-      if (onIdle) {
-        map.addListener("idle", () => onIdle(map));
-      }
     }
-  }, [map, onClick, onIdle]);
+  }, [map, onClick]);
 
   return (
     <>

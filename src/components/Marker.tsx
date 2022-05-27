@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import MarkerOptions = google.maps.MarkerOptions;
 
-const Marker = (options: MarkerOptions) => {
+const Marker = ({
+  onClick,
+  ...options
+}: MarkerOptions & { onClick?: () => void }) => {
   const [marker, setMarker] = useState<google.maps.Marker>();
 
   useEffect(() => {
@@ -18,8 +21,15 @@ const Marker = (options: MarkerOptions) => {
   }, [marker]);
 
   useEffect(() => {
-    if (marker) {
-      marker.setOptions(options);
+    if (!marker) return;
+
+    marker.setOptions(options);
+
+    if (onClick) {
+      marker.setClickable(true);
+      marker.addListener("click", onClick);
+    } else {
+      marker.setClickable(false);
     }
   }, [marker, options]);
 

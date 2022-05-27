@@ -1,51 +1,60 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import { Status, Wrapper } from "@googlemaps/react-wrapper";
-import Marker from "./components/Marker";
-import Map from "./components/Map";
-import Line from "./components/Line";
+import { Line, Map, Marker } from "./components";
 import LatLngLiteral = google.maps.LatLngLiteral;
 import MapMouseEvent = google.maps.MapMouseEvent;
 import LatLng = google.maps.LatLng;
+
+interface Location {
+  latLng: LatLng;
+  localId: number;
+}
 
 const render = (status: Status) => {
   return <h1>{status}</h1>;
 };
 
 const App = () => {
-  const [clicks, setClicks] = useState<LatLng[]>([]);
-  const [zoom, setZoom] = useState(6);
-  const [center, setCenter] = useState<LatLngLiteral>({
-    lat: 55,
-    lng: -4,
-  });
+  const [nextLocalId, setNextLocalId] = useState(0);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const zoom = 6;
+  const center = { lat: 55, lng: -4 };
+
   const midpoint = useMemo<LatLngLiteral | null>(() => {
-    if (clicks.length < 2) {
+    if (locations.length < 2) {
       return null;
     }
 
     return {
-      lat: clicks.reduce((acc, curr) => acc + curr.lat(), 0) / clicks.length,
-      lng: clicks.reduce((acc, curr) => acc + curr.lng(), 0) / clicks.length,
+      lat:
+        locations.reduce((acc, { latLng }) => acc + latLng.lat(), 0) /
+        locations.length,
+      lng:
+        locations.reduce((acc, { latLng }) => acc + latLng.lng(), 0) /
+        locations.length,
     };
-  }, [clicks]);
+  }, [locations]);
 
-  const onClick = (e: MapMouseEvent) => {
-    const newLatLang = e.latLng;
+  const removeLocation = useCallback(
+    (localIdToRemove: number) => {
+      setLocations((prev) =>
+        prev.filter(({ localId }) => localId !== localIdToRemove)
+      );
+    },
+    [locations]
+  );
 
-    if (newLatLang) setClicks((prev) => [...prev, newLatLang]);
-  };
-
-  const onIdle = (m: google.maps.Map) => {
-    const newZoom = m?.getZoom();
-    const newCenter = m?.getCenter()?.toJSON();
-
-    if (newZoom !== undefined) {
-      setZoom(newZoom);
-    }
-
-    if (newCenter) {
-      setCenter(newCenter);
+  const onClick = ({ latLng }: MapMouseEvent) => {
+    if (latLng) {
+      setLocations((prev) => [
+        ...prev,
+        {
+          latLng,
+          localId: nextLocalId,
+        },
+      ]);
+      setNextLocalId((prev) => prev + 1);
     }
   };
 
@@ -58,18 +67,21 @@ const App = () => {
         <Map
           center={center}
           onClick={onClick}
-          onIdle={onIdle}
           zoom={zoom}
           style={{ flexGrow: "1", height: "100%" }}
         >
-          {clicks.map((latLng, i) => (
-            <Marker key={`marker${i}`} position={latLng} />
+          {locations.map(({ localId, latLng }) => (
+            <Marker
+              key={`marker${localId}`}
+              position={latLng}
+              onClick={() => removeLocation(localId)}
+            />
           ))}
 
           {midpoint &&
-            clicks.map((latLng, i) => (
+            locations.map(({ localId, latLng }) => (
               <Line
-                key={`line${i}`}
+                key={`line${localId}`}
                 path={[
                   { lat: latLng.lat(), lng: latLng.lng() },
                   { lat: midpoint.lat, lng: midpoint.lng },
@@ -93,7 +105,7 @@ const App = () => {
       {/*  setCenter={setCenter}*/}
       {/*  zoom={zoom}*/}
       {/*  setZoom={setZoom}*/}
-      {/*  clicks={clicks}*/}
+      {/*  locations={locations}*/}
       {/*  setClicks={setClicks}*/}
       {/*/>*/}
     </div>
