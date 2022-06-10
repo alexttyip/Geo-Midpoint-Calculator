@@ -1,4 +1,6 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ParamKeyValuePair, useSearchParams } from "react-router-dom";
+
 import { Form, Line, Map, Marker } from "./components";
 
 export interface Location {
@@ -6,11 +8,43 @@ export interface Location {
   localId: number;
 }
 
+const DEFAULT_ZOOM = 6; // Approx whole of UK
+const DEFAULT_CENTER = { lat: 55, lng: -4 }; // Approx UK
+
 const MyMapApp = () => {
-  const [nextLocalId, setNextLocalId] = useState(0);
-  const [locations, setLocations] = useState<Location[]>([]);
-  const zoom = 6;
-  const center = { lat: 55, lng: -4 };
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const [locations, setLocations] = useState<Location[]>(() => {
+    const arr: Location[] = [];
+    let localId = 0;
+    searchParams.forEach((value, key) => {
+      if (key !== "coordinate") return;
+
+      const [lat, lng] = value.split(",").map(Number);
+
+      arr.push({
+        latLng: new window.google.maps.LatLng({ lat, lng }),
+        localId,
+      });
+
+      localId++;
+    });
+
+    return arr;
+  });
+
+  const [nextLocalId, setNextLocalId] = useState(locations.length);
+
+  useEffect(() => {
+    setSearchParams(
+      locations.map(
+        ({ latLng }): ParamKeyValuePair => [
+          "coordinate",
+          `${latLng.lat()},${latLng.lng()}`,
+        ]
+      )
+    );
+  }, [locations]);
 
   const midpoint = useMemo<google.maps.LatLng | null>(() => {
     if (locations.length < 2) {
@@ -52,9 +86,9 @@ const MyMapApp = () => {
   return (
     <div style={{ display: "flex", height: "100%" }}>
       <Map
-        center={center}
+        center={DEFAULT_CENTER}
         onClick={onClick}
-        zoom={zoom}
+        zoom={DEFAULT_ZOOM}
         style={{ flexGrow: "1", height: "100%" }}
       >
         {locations.map(({ localId, latLng }) => (

@@ -17,6 +17,9 @@ const Form = ({ locations, setLocations }: FormProps) => {
     }
   });
 
+  const onShareClick = () =>
+    navigator.clipboard.writeText(window.location.href);
+
   return (
     <div
       style={{
@@ -32,6 +35,10 @@ const Form = ({ locations, setLocations }: FormProps) => {
       {locations.map(({ localId, latLng }) => (
         <pre key={localId}>{JSON.stringify(latLng.toJSON(), null, 2)}</pre>
       ))}
+
+      <button style={{ width: "100%" }} onClick={onShareClick}>
+        Share
+      </button>
 
       <button
         ref={clearButtonRef}

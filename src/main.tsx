@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Status, Wrapper } from "@googlemaps/react-wrapper";
 
 import MyMapApp from "./MyMapApp";
@@ -21,10 +21,17 @@ const render = (status: Status) => {
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Wrapper
-        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
-        render={render}
-      />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <Wrapper
+              apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
+              render={render}
+            />
+          }
+        />
+      </Routes>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
