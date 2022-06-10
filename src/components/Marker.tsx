@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import MarkerOptions = google.maps.MarkerOptions;
 
-const Marker = ({
+const MarkerComponent = ({
   onClick,
   ...options
-}: MarkerOptions & { onClick?: () => void }) => {
+}: google.maps.MarkerOptions & { onClick?: () => void }) => {
   const [marker, setMarker] = useState<google.maps.Marker>();
 
   useEffect(() => {
     if (!marker) {
-      setMarker(new google.maps.Marker());
+      setMarker(new window.google.maps.Marker());
     }
 
     // remove marker from map on unmount
@@ -36,4 +35,4 @@ const Marker = ({
   return null;
 };
 
-export default Marker;
+export default MarkerComponent;

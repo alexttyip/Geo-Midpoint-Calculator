@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import PolylineOptions = google.maps.PolylineOptions;
 
-const Line = (options: PolylineOptions) => {
+const Line = (options: google.maps.PolylineOptions) => {
   const [line, setLine] = useState<google.maps.Polyline>();
 
   useEffect(() => {
     if (!line) {
-      setLine(new google.maps.Polyline());
+      setLine(new window.google.maps.Polyline());
     }
 
     return () => {
