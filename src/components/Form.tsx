@@ -1,5 +1,6 @@
-import { Location } from "../MyMapApp";
 import { useEffect, useRef } from "react";
+
+import { Location } from "../MyMapApp";
 
 interface FormProps {
   locations: Location[];

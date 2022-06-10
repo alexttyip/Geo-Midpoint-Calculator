@@ -1,8 +1,11 @@
-import { Status, Wrapper } from "@googlemaps/react-wrapper";
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import { BrowserRouter } from "react-router-dom";
+import { Status, Wrapper } from "@googlemaps/react-wrapper";
+
 import MyMapApp from "./MyMapApp";
+
+import "./index.css";
 
 const render = (status: Status) => {
   switch (status) {
@@ -17,10 +20,12 @@ const render = (status: Status) => {
 
 ReactDOM.render(
   <React.StrictMode>
-    <Wrapper
-      apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
-      render={render}
-    />
+    <BrowserRouter>
+      <Wrapper
+        apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string}
+        render={render}
+      />
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );

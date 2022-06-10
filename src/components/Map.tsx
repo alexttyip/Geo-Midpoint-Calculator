@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
+
 import { useDeepCompareEffectForMaps } from "../utils/deepCompare";
 
 interface MapProps extends google.maps.MapOptions {
