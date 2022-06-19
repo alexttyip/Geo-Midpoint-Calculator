@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@googlemaps/react-wrapper": "^1.1.34",
-    "@googlemaps/typescript-guards": "^1.0.16",
-    "fast-equals": "^3.0.2",
+    "@googlemaps/typescript-guards": "^2.0.0",
+    "fast-equals": "^4.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-router-dom": "^6.3.0"
@@ -27,7 +27,7 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^8.0.0",
-    "lint-staged": "^12.4.1",
+    "lint-staged": "^13.0.2",
     "prettier": "^2.6.2",
     "sass": "^1.52.1",
     "typescript": "^4.6.3",
