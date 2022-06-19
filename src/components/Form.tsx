@@ -2,12 +2,15 @@ import { useEffect, useRef } from "react";
 
 import { Location } from "../MyMapApp";
 
+import PlacesAutocomplete from "./PlacesAutocomplete";
+
 interface FormProps {
   locations: Location[];
-  setLocations: (locations: Location[]) => void;
+  addLatLng: (latLng: google.maps.LatLng) => void;
+  clearLocations: () => void;
 }
 
-const Form = ({ locations, setLocations }: FormProps) => {
+const Form = ({ locations, addLatLng, clearLocations }: FormProps) => {
   const clearButtonRef = useRef<HTMLButtonElement>(null);
 
   // Always scroll to bottom of list
@@ -28,6 +31,8 @@ const Form = ({ locations, setLocations }: FormProps) => {
         overflowY: "auto",
       }}
     >
+      <PlacesAutocomplete setSelected={addLatLng} />
+
       <h3>
         {locations.length === 0 ? "Click on map to add markers" : "Markers"}
       </h3>
@@ -43,7 +48,7 @@ const Form = ({ locations, setLocations }: FormProps) => {
       <button
         ref={clearButtonRef}
         style={{ width: "100%" }}
-        onClick={() => setLocations([])}
+        onClick={clearLocations}
       >
         Clear
       </button>

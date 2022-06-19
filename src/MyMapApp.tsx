@@ -61,6 +61,20 @@ const MyMapApp = () => {
     });
   }, [locations]);
 
+  const addLocation = (latLng: google.maps.LatLng) => {
+    if (!latLng) return;
+
+    setLocations((prev) => [
+      ...prev,
+      {
+        latLng,
+        localId: nextLocalId,
+      },
+    ]);
+
+    setNextLocalId((prev) => prev + 1);
+  };
+
   const removeLocation = useCallback(
     (localIdToRemove: number) => {
       setLocations((prev) =>
@@ -70,18 +84,8 @@ const MyMapApp = () => {
     [locations]
   );
 
-  const onClick = ({ latLng }: google.maps.MapMouseEvent) => {
-    if (latLng) {
-      setLocations((prev) => [
-        ...prev,
-        {
-          latLng,
-          localId: nextLocalId,
-        },
-      ]);
-      setNextLocalId((prev) => prev + 1);
-    }
-  };
+  const onClick = ({ latLng }: google.maps.MapMouseEvent) =>
+    latLng && addLocation(latLng);
 
   return (
     <div style={{ display: "flex", height: "100%" }}>
@@ -115,7 +119,13 @@ const MyMapApp = () => {
       </Map>
 
       {/* Basic form for controlling center and zoom of map. */}
-      <Form locations={locations} setLocations={setLocations} />
+      <Form
+        locations={locations}
+        addLatLng={addLocation}
+        clearLocations={() => {
+          setLocations([]);
+        }}
+      />
     </div>
   );
 };
