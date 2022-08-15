@@ -8,9 +8,15 @@ interface FormProps {
   locations: Location[];
   addLatLng: (latLng: google.maps.LatLng) => void;
   clearLocations: () => void;
+  toggleMidpoint: () => void;
 }
 
-const Form = ({ locations, addLatLng, clearLocations }: FormProps) => {
+const Form = ({
+  locations,
+  addLatLng,
+  clearLocations,
+  toggleMidpoint,
+}: FormProps) => {
   const clearButtonRef = useRef<HTMLButtonElement>(null);
 
   // Always scroll to bottom of list
@@ -51,6 +57,9 @@ const Form = ({ locations, addLatLng, clearLocations }: FormProps) => {
         onClick={clearLocations}
       >
         Clear
+      </button>
+      <button style={{ width: "100%" }} onClick={toggleMidpoint}>
+        Toggle Show Midpoint
       </button>
     </div>
   );

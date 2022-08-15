@@ -13,6 +13,7 @@ const DEFAULT_CENTER = { lat: 55, lng: -4 }; // Approx UK
 
 const MyMapApp = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const [showMidpoint, setShowMidpoint] = useState(true);
 
   const [locations, setLocations] = useState<Location[]>(() => {
     const arr: Location[] = [];
@@ -47,7 +48,7 @@ const MyMapApp = () => {
   }, [locations]);
 
   const midpoint = useMemo<google.maps.LatLng | null>(() => {
-    if (locations.length < 2) {
+    if (locations.length < 2 || !showMidpoint) {
       return null;
     }
 
@@ -59,7 +60,7 @@ const MyMapApp = () => {
         locations.reduce((acc, { latLng }) => acc + latLng.lng(), 0) /
         locations.length,
     });
-  }, [locations]);
+  }, [locations, showMidpoint]);
 
   const addLocation = (latLng: google.maps.LatLng) => {
     if (!latLng) return;
@@ -122,6 +123,7 @@ const MyMapApp = () => {
       <Form
         locations={locations}
         addLatLng={addLocation}
+        toggleMidpoint={() => setShowMidpoint((prev) => !prev)}
         clearLocations={() => {
           setLocations([]);
         }}
