@@ -8,6 +8,7 @@ import {
   Heading,
   ListItem,
   OrderedList,
+  useToast,
 } from "@chakra-ui/react";
 
 import { Location } from "../MyMapApp";
@@ -28,6 +29,7 @@ const Form = ({
   toggleMidpoint,
 }: FormProps) => {
   const columnBottomRef = useRef<HTMLDivElement>(null);
+  const toast = useToast();
 
   // Always scroll to bottom of list
   useEffect(() => {
@@ -36,8 +38,14 @@ const Form = ({
     }
   });
 
-  const onShareClick = () =>
+  const onShareClick = () => {
     navigator.clipboard.writeText(window.location.href);
+
+    toast({
+      title: "Copied to clipboard",
+      duration: 2000,
+    });
+  };
 
   return (
     <Flex
