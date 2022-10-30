@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ParamKeyValuePair, useSearchParams } from "react-router-dom";
+import { Flex } from "@chakra-ui/react";
 
 import { Form, Line, Map, Marker } from "./components";
 
@@ -89,7 +90,7 @@ const MyMapApp = () => {
     latLng && addLocation(latLng);
 
   return (
-    <div style={{ display: "flex", height: "100%" }}>
+    <Flex height="100%">
       <Map
         center={DEFAULT_CENTER}
         onClick={onClick}
@@ -124,11 +125,9 @@ const MyMapApp = () => {
         locations={locations}
         addLatLng={addLocation}
         toggleMidpoint={() => setShowMidpoint((prev) => !prev)}
-        clearLocations={() => {
-          setLocations([]);
-        }}
+        clearLocations={() => setLocations([])}
       />
-    </div>
+    </Flex>
   );
 };
 

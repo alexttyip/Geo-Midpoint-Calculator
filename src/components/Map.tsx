@@ -1,4 +1,5 @@
 import {
+  Attributes,
   Children,
   cloneElement,
   isValidElement,
@@ -52,6 +53,8 @@ const Map = ({ onClick, children, style, ...options }: MapProps) => {
       {Children.map(children, (child) => {
         if (isValidElement(child)) {
           // set the map prop on the child component
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           return cloneElement(child, { map });
         }
       })}

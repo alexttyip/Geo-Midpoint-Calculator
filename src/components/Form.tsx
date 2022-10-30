@@ -1,4 +1,14 @@
 import { useEffect, useRef } from "react";
+import {
+  Button,
+  ButtonGroup,
+  Code,
+  Divider,
+  Flex,
+  Heading,
+  ListItem,
+  OrderedList,
+} from "@chakra-ui/react";
 
 import { Location } from "../MyMapApp";
 
@@ -17,12 +27,12 @@ const Form = ({
   clearLocations,
   toggleMidpoint,
 }: FormProps) => {
-  const clearButtonRef = useRef<HTMLButtonElement>(null);
+  const columnBottomRef = useRef<HTMLDivElement>(null);
 
   // Always scroll to bottom of list
   useEffect(() => {
-    if (clearButtonRef?.current) {
-      clearButtonRef.current?.scrollIntoView();
+    if (columnBottomRef?.current) {
+      columnBottomRef.current?.scrollIntoView();
     }
   });
 
@@ -30,38 +40,51 @@ const Form = ({
     navigator.clipboard.writeText(window.location.href);
 
   return (
-    <div
-      style={{
-        padding: "1rem",
-        flexBasis: "250px",
-        overflowY: "auto",
-      }}
+    <Flex
+      flexDir="column"
+      flexBasis="350"
+      padding="1rem"
+      gap="1rem"
+      overflowY="auto"
     >
       <PlacesAutocomplete setSelected={addLatLng} />
 
-      <h3>
+      <Heading size="lg">
         {locations.length === 0 ? "Click on map to add markers" : "Markers"}
-      </h3>
+      </Heading>
 
-      {locations.map(({ localId, latLng }) => (
-        <pre key={localId}>{JSON.stringify(latLng.toJSON(), null, 2)}</pre>
-      ))}
+      <OrderedList spacing="1rem">
+        {locations.map(({ localId, latLng: { lat, lng } }) => (
+          <ListItem key={localId}>
+            <Code>Lat: {lat()}</Code>
+            <br />
+            <Code>Lng: {lng()}</Code>
+          </ListItem>
+        ))}
+      </OrderedList>
 
-      <button style={{ width: "100%" }} onClick={onShareClick}>
-        Share
-      </button>
+      <Divider />
 
-      <button
-        ref={clearButtonRef}
-        style={{ width: "100%" }}
-        onClick={clearLocations}
+      <ButtonGroup
+        colorScheme="teal"
+        flexDirection="column"
+        spacing={0}
+        width="100%"
+        gap="inherit"
       >
-        Clear
-      </button>
-      <button style={{ width: "100%" }} onClick={toggleMidpoint}>
-        Toggle Show Midpoint
-      </button>
-    </div>
+        <Button onClick={onShareClick}>Share</Button>
+
+        <Button onClick={clearLocations} colorScheme="red">
+          Clear
+        </Button>
+
+        <Button onClick={toggleMidpoint} variant="outline">
+          Toggle Show Midpoint
+        </Button>
+      </ButtonGroup>
+
+      <div ref={columnBottomRef} />
+    </Flex>
   );
 };
 

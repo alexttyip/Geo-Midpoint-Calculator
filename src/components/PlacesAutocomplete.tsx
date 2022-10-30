@@ -1,10 +1,10 @@
 import {
-  Combobox,
-  ComboboxInput,
-  ComboboxList,
-  ComboboxOption,
-  ComboboxPopover,
-} from "@reach/combobox";
+  AutoComplete,
+  AutoCompleteInput,
+  AutoCompleteItem,
+  AutoCompleteList,
+  Item,
+} from "@choc-ui/chakra-autocomplete";
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -16,40 +16,37 @@ interface PlacesAutocompleteProps {
 
 const PlacesAutocomplete = ({ setSelected }: PlacesAutocompleteProps) => {
   const {
-    ready,
     value,
     setValue,
     suggestions: { status, data },
     clearSuggestions,
   } = usePlacesAutocomplete();
 
-  const handleSelect = async (address: string) => {
-    setValue(address, false);
-    clearSuggestions();
-
-    const results = await getGeocode({ address });
-
-    setSelected(new window.google.maps.LatLng(getLatLng(results[0])));
+  const handleSelect = ({ item: { value } }: { item: Item }) => {
+    getGeocode({ address: value }).then((results) => {
+      setSelected(new window.google.maps.LatLng(getLatLng(results[0])));
+      setValue("", false);
+      clearSuggestions();
+    });
   };
 
   return (
-    <Combobox onSelect={handleSelect}>
-      <ComboboxInput
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        disabled={!ready}
-        className="combobox-input"
+    <AutoComplete openOnFocus onSelectOption={handleSelect}>
+      <AutoCompleteInput
         placeholder="Search an address"
+        value={value}
+        onChange={(value) => setValue(value.target.value)}
       />
-      <ComboboxPopover>
-        <ComboboxList>
-          {status === "OK" &&
-            data.map(({ place_id, description }) => (
-              <ComboboxOption key={place_id} value={description} />
-            ))}
-        </ComboboxList>
-      </ComboboxPopover>
-    </Combobox>
+
+      <AutoCompleteList>
+        {status === "OK" &&
+          data.map(({ place_id, description }) => (
+            <AutoCompleteItem key={`option-${place_id}`} value={description}>
+              {description}
+            </AutoCompleteItem>
+          ))}
+      </AutoCompleteList>
+    </AutoComplete>
   );
 };
 
