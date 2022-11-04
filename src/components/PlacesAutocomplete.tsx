@@ -11,10 +11,10 @@ import usePlacesAutocomplete, {
 } from "use-places-autocomplete";
 
 interface PlacesAutocompleteProps {
-  setSelected: (place: google.maps.LatLng) => void;
+  addLocation: (place: google.maps.LatLng, name?: string) => void;
 }
 
-const PlacesAutocomplete = ({ setSelected }: PlacesAutocompleteProps) => {
+const PlacesAutocomplete = ({ addLocation }: PlacesAutocompleteProps) => {
   const {
     value,
     setValue,
@@ -24,7 +24,7 @@ const PlacesAutocomplete = ({ setSelected }: PlacesAutocompleteProps) => {
 
   const handleSelect = ({ item: { value } }: { item: Item }) => {
     getGeocode({ address: value }).then((results) => {
-      setSelected(new window.google.maps.LatLng(getLatLng(results[0])));
+      addLocation(new window.google.maps.LatLng(getLatLng(results[0])), value);
       setValue("", false);
       clearSuggestions();
     });

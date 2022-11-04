@@ -17,14 +17,14 @@ import PlacesAutocomplete from "./PlacesAutocomplete";
 
 interface FormProps {
   locations: Location[];
-  addLatLng: (latLng: google.maps.LatLng) => void;
+  addLocation: (latLng: google.maps.LatLng, name?: string) => void;
   clearLocations: () => void;
   toggleMidpoint: () => void;
 }
 
 const Form = ({
   locations,
-  addLatLng,
+  addLocation,
   clearLocations,
   toggleMidpoint,
 }: FormProps) => {
@@ -55,15 +55,21 @@ const Form = ({
       gap="1rem"
       overflowY="auto"
     >
-      <PlacesAutocomplete setSelected={addLatLng} />
+      <PlacesAutocomplete addLocation={addLocation} />
 
       <Heading size="lg">
         {locations.length === 0 ? "Click on map to add markers" : "Markers"}
       </Heading>
 
       <OrderedList spacing="1rem">
-        {locations.map(({ localId, latLng: { lat, lng } }) => (
+        {locations.map(({ localId, latLng: { lat, lng }, name }) => (
           <ListItem key={localId}>
+            {name && (
+              <>
+                <Code>{name}</Code>
+                <br />
+              </>
+            )}
             <Code>Lat: {lat()}</Code>
             <br />
             <Code>Lng: {lng()}</Code>

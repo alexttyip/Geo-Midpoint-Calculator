@@ -5,6 +5,7 @@ import { Flex } from "@chakra-ui/react";
 import { Form, Line, Map, Marker } from "./components";
 
 export interface Location {
+  name?: string;
   latLng: google.maps.LatLng;
   localId: number;
 }
@@ -63,7 +64,7 @@ const MyMapApp = () => {
     });
   }, [locations, showMidpoint]);
 
-  const addLocation = (latLng: google.maps.LatLng) => {
+  const addLocation = (latLng: google.maps.LatLng, name?: string) => {
     if (!latLng) return;
 
     setLocations((prev) => [
@@ -71,6 +72,7 @@ const MyMapApp = () => {
       {
         latLng,
         localId: nextLocalId,
+        name,
       },
     ]);
 
@@ -123,7 +125,7 @@ const MyMapApp = () => {
       {/* Basic form for controlling center and zoom of map. */}
       <Form
         locations={locations}
-        addLatLng={addLocation}
+        addLocation={addLocation}
         toggleMidpoint={() => setShowMidpoint((prev) => !prev)}
         clearLocations={() => setLocations([])}
       />
