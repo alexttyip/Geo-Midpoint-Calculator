@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ParamKeyValuePair, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Flex } from "@chakra-ui/react";
 
 import { Form, Line, Map, Marker } from "./components";
@@ -21,16 +21,18 @@ const MyMapApp = () => {
     const arr: Location[] = [];
     let localId = 0;
     searchParams.forEach((value, key) => {
-      if (key !== "coordinate") return;
+      if (key !== "c" || !value) return;
 
-      const [lat, lng] = value.split(",").map(Number);
+      value.split("~").forEach((c: string) => {
+        const [lat, lng] = c.split("|").map(Number);
 
-      arr.push({
-        latLng: new window.google.maps.LatLng({ lat, lng }),
-        localId,
+        arr.push({
+          latLng: new window.google.maps.LatLng({ lat, lng }),
+          localId,
+        });
+
+        localId++;
       });
-
-      localId++;
     });
 
     return arr;
@@ -39,14 +41,11 @@ const MyMapApp = () => {
   const [nextLocalId, setNextLocalId] = useState(locations.length);
 
   useEffect(() => {
-    setSearchParams(
-      locations.map(
-        ({ latLng }): ParamKeyValuePair => [
-          "coordinate",
-          `${latLng.lat()},${latLng.lng()}`,
-        ]
-      )
-    );
+    setSearchParams({
+      c: locations
+        .map(({ latLng }) => `${latLng.lat()}|${latLng.lng()}`)
+        .join("~"),
+    });
   }, [locations]);
 
   const midpoint = useMemo<google.maps.LatLng | null>(() => {
@@ -70,7 +69,10 @@ const MyMapApp = () => {
     setLocations((prev) => [
       ...prev,
       {
-        latLng,
+        latLng: new window.google.maps.LatLng({
+          lat: Number(latLng.lat().toPrecision(7)),
+          lng: Number(latLng.lng().toPrecision(7)),
+        }),
         localId: nextLocalId,
         name,
       },
