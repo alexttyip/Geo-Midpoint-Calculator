@@ -1,5 +1,4 @@
 import {
-  Attributes,
   Children,
   cloneElement,
   isValidElement,
